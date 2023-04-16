@@ -28,10 +28,10 @@ impl EventHandler for Handler {
         else if msg.content.starts_with("!알림") {
             let _msg_id = msg.id;
             let text = msg.content.splitn(2, ' ').collect::<Vec<&str>>();
-            let mut content = text[1].trim();
+            let content = text[1].trim();
             
-            if content.len() != 0{
-                let message_text = format!("{} {}","@everyone",content);
+            if !content.is_empty(){
+                let message_text = format!("{} {}","",content);
                 
                 if let Err(why) = msg.delete(&ctx.http).await{
                     println!("Error deleting message: {:?}", why);
