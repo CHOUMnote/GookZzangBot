@@ -28,6 +28,10 @@ impl EventHandler for Handler {
         else if msg.content.starts_with("!알림") {
             let _msg_id = msg.id;
             let text = msg.content.splitn(2, ' ').collect::<Vec<&str>>();
+            if text.len() == 1{
+                return 
+            }
+
             let content = text[1].trim();
             
             if !content.is_empty(){
@@ -55,7 +59,7 @@ impl EventHandler for Handler {
 const KEY:&str = "../key.key";  //you need define key
 #[tokio::main]
 async fn main() {
-    // let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment"); //used ENC VAR
+    // let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment"); //used ENV VAR
     let mut token:String = String::new();
     let intents = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
 
