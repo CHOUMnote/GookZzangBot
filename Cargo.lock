@@ -272,6 +272,7 @@ dependencies = [
 name = "gook_zzang_bot"
 version = "0.1.0"
 dependencies = [
+ "rand",
  "serenity",
  "tokio",
 ]

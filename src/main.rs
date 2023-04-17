@@ -1,13 +1,14 @@
 // use std::env;    //if you want to save the key in ENV VAR
-use std::{fs::File, io::Read};  
 use serenity::{
     async_trait,
     model::{channel::Message, gateway::Ready},
     prelude::*,
 };
+use std::{fs::File, io::Read};
 
-const INFO: &str = 
-"```
+pub mod random_call;
+
+const INFO: &str = "```
 \t나는 국진봇...
 \t꺼져라 닝겐...
 ```";
@@ -22,31 +23,44 @@ impl EventHandler for Handler {
             if let Err(why) = msg.channel_id.say(&ctx.http, INFO).await {
                 println!("Error sending message: {:?}", why);
             }
-            println!("메세지 수신 {}|{} :{}",msg.author.id,msg.author.name,msg.content);
-        }
-
-        else if msg.content.starts_with("!알림") {
+            println!(
+                "메세지 수신 {}|{} :{}",
+                msg.author.id, msg.author.name, msg.content
+            );
+        } else if msg.content.starts_with("!알림") {
             let _msg_id = msg.id;
             let text = msg.content.splitn(2, ' ').collect::<Vec<&str>>();
-            if text.len() == 1{
-                return 
+            if text.len() == 1 {
+                return;
             }
 
             let content = text[1].trim();
-            
-            if !content.is_empty(){
-                let message_text = format!("{} {}","",content);
-                
-                if let Err(why) = msg.delete(&ctx.http).await{
-                    println!("Error deleting message: {:?}", why);
-                } 
 
-                if let Err(why) = msg.channel_id.say(&ctx.http, message_text).await{
+            if !content.is_empty() {
+                let message_text = format!("{} {}", "", content);
+
+                if let Err(why) = msg.delete(&ctx.http).await {
+                    println!("Error deleting message: {:?}", why);
+                }
+
+                if let Err(why) = msg.channel_id.say(&ctx.http, message_text).await {
                     println!("Error sending message: {:?}", why);
                 }
 
-                println!("메세지 수신 {}|{} :{}",msg.author.id,msg.author.name,msg.content);
+                println!(
+                    "메세지 수신 {}|{} :{}",
+                    msg.author.id, msg.author.name, msg.content
+                );
             }
+        } else if msg.content.starts_with("!주사위") {
+            let dice_value = random_call::get_dice();
+            if let Err(why) = msg.channel_id.say(&ctx.http, dice_value).await {
+                println!("Error sending message: {:?}", why);
+            }
+            println!(
+                "메세지 수신 {}|{} :{}",
+                msg.author.id, msg.author.name, msg.content
+            );
         }
     }
 
@@ -55,21 +69,18 @@ impl EventHandler for Handler {
     }
 }
 
-
-const KEY:&str = "../key.key";  //you need define key
+const KEY: &str = "../key.key"; //you need define key
 #[tokio::main]
 async fn main() {
     // let token = env::var("DISCORD_TOKEN").expect("Expected a token in the environment"); //used ENV VAR
-    let mut token:String = String::new();
+    let mut token: String = String::new();
     let intents = GatewayIntents::non_privileged() | GatewayIntents::MESSAGE_CONTENT;
 
     //GET KEY - you make a 'key' file
     match File::open(KEY) {
-        Ok(mut file) => {
-            match file.read_to_string(&mut token) {
-                Ok(_) => println!("key is OK!"),
-                Err(msg) => println!("read error: {}", msg),
-            }
+        Ok(mut file) => match file.read_to_string(&mut token) {
+            Ok(_) => println!("key is OK!"),
+            Err(msg) => println!("read error: {}", msg),
         },
         Err(msg) => println!("open error: {}", msg),
     }
