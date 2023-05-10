@@ -7,3 +7,4 @@ todo.md
 .vscode
 key.key
 *.log
+/res

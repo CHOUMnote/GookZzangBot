@@ -53,7 +53,9 @@ impl EventHandler for Handler {
                 );
             }
         } else if msg.content.starts_with("!주사위") {
-            let dice_value = random_call::get_dice();
+            use random_call::*;
+            
+            let dice_value = get_dice();
             if let Err(why) = msg.channel_id.say(&ctx.http, dice_value).await {
                 println!("Error sending message: {:?}", why);
             }
