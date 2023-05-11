@@ -4,7 +4,7 @@ use serenity::{
     model::{channel::Message, gateway::Ready},
     prelude::*,
 };
-use std::{fs::File, io::Read};
+use std::{fs::File, io::Read, num::ParseIntError};
 
 pub mod random_call;
 
@@ -54,10 +54,26 @@ impl EventHandler for Handler {
             }
         } else if msg.content.starts_with("!주사위") {
             use random_call::*;
-            
-            let dice_value = get_dice();
-            if let Err(why) = msg.channel_id.say(&ctx.http, dice_value).await {
-                println!("Error sending message: {:?}", why);
+            let text = msg.content.splitn(2, ' ').collect::<Vec<&str>>();
+
+            if text.len() == 1 {
+                let dice_value = get_dice();
+                if let Err(why) = msg.channel_id.say(&ctx.http, dice_value).await {
+                    println!("Error sending message: {:?}", why);
+                }
+            } else {
+                let num: Result<i32, ParseIntError> = text[1].parse();
+                match num {
+                    Ok(a) => {
+                        let dice_value = get_dice_a(a);
+                        if let Err(why) = msg.channel_id.say(&ctx.http, dice_value).await {
+                            println!("Error sending message: {:?}", why);
+                        }
+                    }
+                    Err(err) => {
+                        println!("Parse Error : {:?}", err);
+                    }
+                }
             }
             println!(
                 "메세지 수신 {}|{} :{}",
