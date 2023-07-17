@@ -1,0 +1,19 @@
+[package]
+name = "gook-main"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/CHOUMnote/GookZzangBot.git"
+description = "this is BestFriend Bot in Discord Server"
+
+[dependencies]
+gook = {path = "../gook"}
+rand = "0.8.5"
+
+[dependencies.tokio]
+version = "1.18"
+features = ["macros","rt-multi-thread"]
+
+[dependencies.serenity]
+default-features = false
+features = ["client", "gateway", "model", "rustls_backend"]
+version = "0.11"

@@ -53,7 +53,7 @@ impl EventHandler for Handler {
                 );
             }
         } else if msg.content.starts_with("!주사위") {
-            use random_call::*;
+            use random_call::dice::*;
             let text = msg.content.splitn(2, ' ').collect::<Vec<&str>>();
 
             if text.len() == 1 {
@@ -100,7 +100,10 @@ async fn main() {
             Ok(_) => println!("key is OK!"),
             Err(msg) => println!("read error: {}", msg),
         },
-        Err(msg) => println!("open error: {}", msg),
+        Err(msg) => {
+            println!("open error: {}", msg);
+            return;
+        }
     }
 
     //make client
@@ -114,3 +117,12 @@ async fn main() {
         println!("Client error: {:?}", why);
     }
 }
+
+// use tokio::time::{sleep, Duration};
+// #[tokio::main]
+// async fn main() {
+//     gook::gook_demo(1);
+//     let x = sleep(Duration::from_millis(3000));
+//     x.await;
+//     gook::gook_demo(2);
+// }
